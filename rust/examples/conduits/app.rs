@@ -1,4 +1,4 @@
-use crate::conduits::{transaction::Transactions, conduit::sync};
+use crate::conduits::{transaction::Transactions, sync_messages::sync};
 use warp::Filter;
 use tokio;
 use std::sync::Arc;
