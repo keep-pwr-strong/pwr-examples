@@ -1,6 +1,6 @@
 from flask import Flask, jsonify
 from transaction import Transactions
-from conduit import sync
+from sync_messages import sync
 import threading
 
 app = Flask(__name__)

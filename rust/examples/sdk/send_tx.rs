@@ -23,8 +23,7 @@ async fn set_guardian() {
     println!("ADDRESS: {}", wallet.get_address());
 
     // Guardian address that will verify your transactions
-    // GUARDIAN_ADDRESS: 20 bytes address without `0x`
-    let guardian = "34bfe9c609ca72d5a4661889033a221fa07ef61a".into();
+    let guardian = "0x34bfe9c609ca72d5a4661889033a221fa07ef61a".to_string();
 
     // Guardian validity period - 30 minutes
     let current_time = Utc::now();
@@ -32,7 +31,7 @@ async fn set_guardian() {
     let expiry_date = future_time.timestamp() as u64;
 
     // Set your wallet guardian
-    let tx_hash = wallet.set_guardian(expiry_date, guardian).await;
+    let tx_hash = wallet.set_guardian(guardian, expiry_date).await;
 
     println!("Transaction Hash: {tx_hash}");
 }
@@ -43,9 +42,8 @@ async fn move_stake() {
     let private_key = env::var("PRIVATE_KEY").unwrap();
     let wallet = Wallet::from_hex(&private_key).unwrap();
 
-    // FROM_VALIDATOR_ADDRESS and TO_VALIDATOR_ADDRESS: 20 bytes address without `0x`
-    let from_validator = "FROM_VALIDATOR_ADDRESS".into();
-    let to_validator = "TO_VALIDATOR_ADDRESS".into();
+    let from_validator = "FROM_VALIDATOR_ADDRESS".to_string();
+    let to_validator = "TO_VALIDATOR_ADDRESS".to_string();
     // Tokens amount - 1 PWR = 1e9 = 1000000000
     let amount = 1000000000;
 
@@ -62,8 +60,7 @@ async fn withdraw() {
     let wallet = Wallet::from_hex(&private_key).unwrap();
 
     // Validator address you delegated
-    // VALIDATOR_ADDRESS: 20 bytes address without `0x`
-    let validator = "3b3b69093879e7b6f28366fa3c32762590ff547e".into();
+    let validator = "0x3b3b69093879e7b6f28366fa3c32762590ff547e".to_string();
     // Tokens amount - 1 PWR = 1e9 = 1000000000
     let amount = 1000000000;
 
@@ -80,8 +77,7 @@ async fn delegate() {
     let wallet = Wallet::from_hex(&private_key).unwrap();
 
     // Validator address
-    // VALIDATOR_ADDRESS: 20 bytes address without `0x`
-    let validator = "VALIDATOR_ADDRESS".into();
+    let validator = "VALIDATOR_ADDRESS".to_string();
     // Tokens amount - 1 PWR = 1e9 = 1000000000
     let amount = 1000000000;
 
@@ -106,7 +102,7 @@ async fn send_payable_data() {
     let data_as_bytes: Vec<u8> = data.into_iter().flat_map(|s| s.as_bytes().to_vec()).collect();
 
     // Send the data at vmID 919 and pay 1e3
-    let tx_hash = wallet.send_payable_vm_data(vm_id, data_as_bytes, amount).await;
+    let tx_hash = wallet.send_payable_vm_data(vm_id, amount, data_as_bytes).await;
 
     println!("Transaction Hash: {tx_hash}");
 }
@@ -136,13 +132,12 @@ async fn transfer() {
     let wallet = Wallet::from_hex(&private_key).unwrap();
 
     // Tokens recipient address
-    // let recipient_address = "RECIPIENT_ADDRESS".into();
-    let recipient_address = "3B3B69093879E7B6F28366FA3C32762590FF547E".into();
+    let recipient_address = "0x3B3B69093879E7B6F28366FA3C32762590FF547E".to_string();
     // Tokens amount - 1 PWR = 1e9 = 1000000000
     let amount = 1000;
 
     // Transfer pwr tokens from the wallet
-    let tx_hash = wallet.transfer_pwr(amount, recipient_address).await;
+    let tx_hash = wallet.transfer_pwr(recipient_address, amount).await;
 
     println!("Transaction Hash: {tx_hash}");
 }

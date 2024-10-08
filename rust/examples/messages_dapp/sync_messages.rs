@@ -11,7 +11,7 @@ pub async fn sync() {
     let vm_id: u64 = 1234;
 
     loop {
-        let latest_block = rpc.lates_block_number().await.unwrap();
+        let latest_block = rpc.get_latest_block_number().await.unwrap();
         let effective_latest_block = if latest_block > starting_block + 1000 {
             starting_block + 1000
         } else {
@@ -20,7 +20,7 @@ pub async fn sync() {
 
         if effective_latest_block >= starting_block {
             // Fetch the transactions in `vmId = 1234`
-            let txns = rpc.vm_data_transactions(starting_block, effective_latest_block, vm_id).await.unwrap();
+            let txns = rpc.get_vm_data_transactions(starting_block, effective_latest_block, vm_id).await.unwrap();
             for txn in txns {
                 let sender = txn.sender;
                 let data = txn.data; // txn.data is Vec<u8>

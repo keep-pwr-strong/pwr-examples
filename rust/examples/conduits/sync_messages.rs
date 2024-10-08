@@ -20,7 +20,7 @@ pub async fn sync(transactions: &Transactions) {
     // Starting an infinite loop to continuously fetch and process transactions
     loop {
         // Fetch the latest block number without explicit error handling
-        let latest_block = rpc.lates_block_number().await.unwrap();
+        let latest_block = rpc.get_latest_block_number().await.unwrap();
         // Defining the effective block range for the next batch of transactions, limiting to 1000 blocks at a time
         let effective_latest_block = if latest_block > starting_block + 1000 {
             starting_block + 1000
@@ -30,7 +30,7 @@ pub async fn sync(transactions: &Transactions) {
         // Checking if there are new blocks to process
         if effective_latest_block >= starting_block {
             // Fetching VM data transactions between the starting block and the effective latest block for a given VM ID
-            let txns = rpc.vm_data_transactions(starting_block, effective_latest_block, vm_id).await.unwrap();
+            let txns = rpc.get_vm_data_transactions(starting_block, effective_latest_block, vm_id).await.unwrap();
             // Iterating through each transaction
             for txn in txns {
                 let sender = txn.sender;
