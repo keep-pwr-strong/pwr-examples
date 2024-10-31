@@ -5,3 +5,4 @@ Implementation of PWR Chain Components
 - 🚧 [JavaScript](/javascript)
 - 🚧 [Rust](/rust)
 - 🚧 [Python](/python)
+- 🚧 [Go](/go)
