@@ -6,20 +6,26 @@ use std::env;
 async fn remove_guardian() {
     dotenv().ok();
     // Setting up your wallet in the SDK
-    let private_key = env::var("PRIVATE_KEY").unwrap();
-    let wallet = Wallet::from_hex(&private_key).unwrap();
+    let seed_phrase = env::var("SEED_PHRASE").unwrap();
+    let wallet = Wallet::new(&seed_phrase);
+
+    let fee_per_byte = (wallet.get_rpc().await).get_fee_per_byte().await.unwrap();
 
     // Remove your wallet guardian
-    let tx_hash = wallet.remove_guardian().await;
+    let res = wallet.remove_guardian(fee_per_byte).await;
 
-    println!("Transaction Hash: {tx_hash}");
+    if res.success {
+        println!("Transaction Hash: {}", res.data.unwrap());
+    } else {
+        println!("Error: {}", res.error);
+    }
 }
 
 async fn set_guardian() {
     dotenv().ok();
     // Setting up your wallet in the SDK
-    let private_key = env::var("PRIVATE_KEY").unwrap();
-    let wallet = Wallet::from_hex(&private_key).unwrap();
+    let seed_phrase = env::var("SEED_PHRASE").unwrap();
+    let wallet = Wallet::new(&seed_phrase);
     println!("ADDRESS: {}", wallet.get_address());
 
     // Guardian address that will verify your transactions
@@ -30,116 +36,152 @@ async fn set_guardian() {
     let future_time = current_time + Duration::minutes(10); // 30 minutes from now
     let expiry_date = future_time.timestamp() as u64;
 
-    // Set your wallet guardian
-    let tx_hash = wallet.set_guardian(guardian, expiry_date).await;
+    let fee_per_byte = (wallet.get_rpc().await).get_fee_per_byte().await.unwrap();
 
-    println!("Transaction Hash: {tx_hash}");
+    // Set your wallet guardian
+    let res = wallet.set_guardian(expiry_date, guardian, fee_per_byte).await;
+
+    if res.success {
+        println!("Transaction Hash: {}", res.data.unwrap());
+    } else {
+        println!("Error: {}", res.error);
+    }
 }
 
 async fn move_stake() {
     dotenv().ok();
     // Setting up your wallet in the SDK
-    let private_key = env::var("PRIVATE_KEY").unwrap();
-    let wallet = Wallet::from_hex(&private_key).unwrap();
+    let seed_phrase = env::var("SEED_PHRASE").unwrap();
+    let wallet = Wallet::new(&seed_phrase);
 
     let from_validator = "FROM_VALIDATOR_ADDRESS".to_string();
     let to_validator = "TO_VALIDATOR_ADDRESS".to_string();
     // Tokens amount - 1 PWR = 1e9 = 1000000000
     let amount = 1000000000;
+    let fee_per_byte = (wallet.get_rpc().await).get_fee_per_byte().await.unwrap();
 
     // Move stake token from validator to another
-    let tx_hash = wallet.move_stake(amount, from_validator, to_validator).await;
+    let res = wallet.move_stake(amount, from_validator, to_validator, fee_per_byte).await;
 
-    println!("Transaction Hash: {tx_hash}");
+    if res.success {
+        println!("Transaction Hash: {}", res.data.unwrap());
+    } else {
+        println!("Error: {}", res.error);
+    }
 }
 
 async fn withdraw() {
     dotenv().ok();
     // Setting up your wallet in the SDK
-    let private_key = env::var("PRIVATE_KEY").unwrap();
-    let wallet = Wallet::from_hex(&private_key).unwrap();
+    let seed_phrase = env::var("SEED_PHRASE").unwrap();
+    let wallet = Wallet::new(&seed_phrase);
 
     // Validator address you delegated
     let validator = "0x3b3b69093879e7b6f28366fa3c32762590ff547e".to_string();
     // Tokens amount - 1 PWR = 1e9 = 1000000000
     let amount = 1000000000;
+    let fee_per_byte = (wallet.get_rpc().await).get_fee_per_byte().await.unwrap();
 
     // Delegate the validator
-    let tx_hash = wallet.withdraw(validator, amount).await;
+    let res = wallet.withdraw(amount, validator, fee_per_byte).await;
 
-    println!("Transaction Hash: {tx_hash}");
+    if res.success {
+        println!("Transaction Hash: {}", res.data.unwrap());
+    } else {
+        println!("Error: {}", res.error);
+    }
 }
 
 async fn delegate() {
     dotenv().ok();
     // Setting up your wallet in the SDK
-    let private_key = env::var("PRIVATE_KEY").unwrap();
-    let wallet = Wallet::from_hex(&private_key).unwrap();
+    let seed_phrase = env::var("SEED_PHRASE").unwrap();
+    let wallet = Wallet::new(&seed_phrase);
 
     // Validator address
     let validator = "VALIDATOR_ADDRESS".to_string();
     // Tokens amount - 1 PWR = 1e9 = 1000000000
     let amount = 1000000000;
+    let fee_per_byte = (wallet.get_rpc().await).get_fee_per_byte().await.unwrap();
 
     // Delegate the validator
-    let tx_hash = wallet.delegate(validator, amount).await;
+    let res = wallet.delegate(validator, amount, fee_per_byte).await;
 
-    println!("Transaction Hash: {tx_hash}");
+    if res.success {
+        println!("Transaction Hash: {}", res.data.unwrap());
+    } else {
+        println!("Error: {}", res.error);
+    }
 }
 
 async fn send_payable_data() {
     dotenv().ok();
     // Setting up your wallet in the SDK
-    let private_key = env::var("PRIVATE_KEY").unwrap();
-    let wallet = Wallet::from_hex(&private_key).unwrap();
+    let seed_phrase = env::var("SEED_PHRASE").unwrap();
+    let wallet = Wallet::new(&seed_phrase);
 
     // VM id used to send the transaction to
-    let vm_id = 919;
+    let vida_id = 919;
     // Tokens amount - 1 PWR = 1e9 = 1000000000
     let amount = 10;
     // Buffer data to be included in the transaction
     let data = vec!["Hello World!"];
     let data_as_bytes: Vec<u8> = data.into_iter().flat_map(|s| s.as_bytes().to_vec()).collect();
+    let fee_per_byte = (wallet.get_rpc().await).get_fee_per_byte().await.unwrap();
 
     // Send the data at vmID 919 and pay 1e3
-    let tx_hash = wallet.send_payable_vm_data(vm_id, amount, data_as_bytes).await;
+    let res = wallet.send_payable_vida_data(vida_id, data_as_bytes, amount, fee_per_byte).await;
 
-    println!("Transaction Hash: {tx_hash}");
+    if res.success {
+        println!("Transaction Hash: {}", res.data.unwrap());
+    } else {
+        println!("Error: {}", res.error);
+    }
 }
 
 async fn send_data() {
     dotenv().ok();
     // Setting up your wallet in the SDK
-    let private_key = env::var("PRIVATE_KEY").unwrap();
-    let wallet = Wallet::from_hex(&private_key).unwrap();
+    let seed_phrase = env::var("SEED_PHRASE").unwrap();
+    let wallet = Wallet::new(&seed_phrase);
 
     // VM id used to send the transaction to
-    let vm_id = 123;
+    let vida_id = 123;
     // Buffer data to be included in the transaction
     let data = vec!["Hello World!"];
     let data_as_bytes: Vec<u8> = data.into_iter().flat_map(|s| s.as_bytes().to_vec()).collect();
+    let fee_per_byte = (wallet.get_rpc().await).get_fee_per_byte().await.unwrap();
 
     // Send the data at vmID 123 to the chain
-    let tx_hash = wallet.send_vm_data(vm_id, data_as_bytes).await;
+    let res = wallet.send_vida_data(vida_id, data_as_bytes, fee_per_byte).await;
 
-    println!("Transaction Hash: {tx_hash}");
+    if res.success {
+        println!("Transaction Hash: {}", res.data.unwrap());
+    } else {
+        println!("Error: {}", res.error);
+    }
 }
 
 async fn transfer() {
     dotenv().ok();
     // Setting up your wallet in the SDK
-    let private_key = env::var("PRIVATE_KEY").unwrap();
-    let wallet = Wallet::from_hex(&private_key).unwrap();
+    let seed_phrase = env::var("SEED_PHRASE").unwrap();
+    let wallet = Wallet::new(&seed_phrase);
 
     // Tokens recipient address
     let recipient_address = "0x3B3B69093879E7B6F28366FA3C32762590FF547E".to_string();
     // Tokens amount - 1 PWR = 1e9 = 1000000000
     let amount = 1000;
+    let fee_per_byte = (wallet.get_rpc().await).get_fee_per_byte().await.unwrap();
 
     // Transfer pwr tokens from the wallet
-    let tx_hash = wallet.transfer_pwr(recipient_address, amount).await;
+    let res = wallet.transfer_pwr(recipient_address, amount, fee_per_byte).await;
 
-    println!("Transaction Hash: {tx_hash}");
+    if res.success {
+        println!("Transaction Hash: {}", res.data.unwrap());
+    } else {
+        println!("Error: {}", res.error);
+    }
 }
 
 #[tokio::main]

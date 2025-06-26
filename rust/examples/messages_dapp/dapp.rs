@@ -6,12 +6,12 @@ use dotenvy::dotenv;
 use std::env;
 
 #[tokio::main]
-pub async fn main() -> Result<(), Box<dyn std::error::Error>> {
+pub async fn homain() -> Result<(), Box<dyn std::error::Error>> {
     dotenv().ok();
     // Setting up your wallet in the SDK
-    let private_key = env::var("PRIVATE_KEY").unwrap();
-    let wallet = Wallet::from_hex(&private_key).unwrap();
-    let vm_id: u64 = 1234;
+    let seed_phrase = env::var("SEED_PHRASE").unwrap();
+    let wallet = Wallet::new(&seed_phrase);
+    let vida_id: u64 = 1234;
     let stdin = io::stdin();
     let reader = BufReader::new(stdin);
     let mut lines = reader.lines();
@@ -21,9 +21,10 @@ pub async fn main() -> Result<(), Box<dyn std::error::Error>> {
     while let Some(message) = lines.next_line().await? {
         let obj = serde_json::json!({ "message": message });
         let data = serde_json::to_vec(&obj)?;
+        let fee_per_byte = (wallet.get_rpc().await).get_fee_per_byte().await.unwrap();
 
-        // Send the VM data and get the transaction hash
-        wallet.send_vm_data(vm_id, data).await;
+        // Send the VIDA data
+        wallet.send_vida_data(vida_id, data, fee_per_byte).await;
     }
     Ok(())
 }

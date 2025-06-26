@@ -1,30 +1,24 @@
 use crate::conduits::{transaction::Transactions, sync_messages::sync};
 use warp::Filter;
 use tokio;
-use std::sync::Arc;
 
 #[tokio::main]
 pub async fn main() {
-    let txs = Arc::new(Transactions::new());
-
     // Add sync to fetch messages and add it to the pending txs
-    tokio::spawn({
-        let txs = txs.clone();
-        async move {
-            sync(&txs).await;
-        }
+    tokio::spawn(async move {
+        sync().await;
     });
 
-    // Define an HTTP GET route at '/pendingVmTransactions'
+    // Define an HTTP GET route at '/pending-vida-transactions'
     // When accessed, this route will return the list of pending transactions
-    let user_route = warp::path("pendingVmTransactions")
+    let user_route = warp::path("pending-vida-transactions")
         .map(move || {
             // Retrieve the list of pending transactions using the getPendingTransactions method
-            let tx = txs.get_pending_transactions();
+            let tx = Transactions::get_pending_transactions();
             // Map through each transaction in the pendingTransactions array
             for txn in tx.clone() {
                 // Return the hexadecimal representation of the transaction
-                txs.remove(&txn);
+                Transactions::remove(&txn);
             }
             // Send the resulting array of hex strings as a JSON response
             warp::reply::json(&tx)

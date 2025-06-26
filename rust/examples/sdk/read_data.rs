@@ -4,12 +4,12 @@ use hex;
 async fn get_vm_data_active() {
     // Setting up the rpc api
     let rpc = RPC::new("https://pwrrpc.pwrlabs.io/").await.unwrap();
-    let start_block = 843500;
-    let end_block = 843750;
-    let vm_id = 123;
+    let start_block = 40635;
+    let end_block = 40726;
+    let vida_id = 123;
 
-    // fetch the transactions sent from `startBlock` to `endBlock` in `vmId`
-    let transactions = rpc.get_vm_data_transactions(start_block, end_block, vm_id).await.unwrap();
+    // fetch the transactions sent from `start_block` to `end_block` in `vida_id`
+    let transactions = rpc.get_vida_data_transactions(start_block, end_block, vida_id).await.unwrap();
 
     for txs in transactions {
         let sender = txs.sender;
@@ -44,12 +44,12 @@ async fn get_vm_data() {
     // Setting up the rpc api
     let rpc = RPC::new("https://pwrrpc.pwrlabs.io/").await.unwrap();
 
-    let start_block = 843500;
-    let end_block = 843750;
-    let vm_id = 123;
+    let start_block = 40635;
+    let end_block = 40726;
+    let vida_id = 123;
 
     // fetch the transactions sent from `startBlock` to `endBlock` in `vmId`
-    let transactions = rpc.get_vm_data_transactions(start_block, end_block, vm_id).await.unwrap();
+    let transactions = rpc.get_vida_data_transactions(start_block, end_block, vida_id).await.unwrap();
     // prints the trasnactions data
     for txs in transactions {
         println!("Data: {:?}", txs.data);
@@ -60,15 +60,18 @@ async fn get_block() {
     // Setting up the rpc api
     let rpc = RPC::new("https://pwrrpc.pwrlabs.io/").await.unwrap();
     // the block number we want fetch
-    let block_number = 20000;
+    let block_number = 100;
     // get the block by number
     let block = rpc.get_block_by_number(block_number).await.unwrap();
 
     // prints the sender address from every transaction in the block
     for (index, txs) in block.transactions.iter().enumerate() {
-        println!("Sender {}: {}", index, txs.sender);
+        let tx = rpc.get_transaction_by_hash(&txs.transaction_hash).await.unwrap();
+        println!("Sender {}: {}", index, tx.sender);
     }
 }
+
+
 
 async fn account() {
     // Setting up the rpc api
