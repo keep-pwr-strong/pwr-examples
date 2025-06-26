@@ -28,6 +28,6 @@ print("Nonce:", nonce)
 
 # Create a wallet from an existing seed phrase (String)
 # in this example we will store the seed phrase
-seed_phrase = "badge drive deputy afraid siren always green about certain stuff play surround";
+seed_phrase = "badge drive deputy afraid siren always green about certain stuff play surround"
 wallet = Wallet.new(seed_phrase)
 print("Address:", wallet.get_address())

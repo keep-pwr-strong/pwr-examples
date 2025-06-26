@@ -48,7 +48,7 @@ async fn get_vm_data() {
     let end_block = 40726;
     let vida_id = 123;
 
-    // fetch the transactions sent from `startBlock` to `endBlock` in `vmId`
+    // fetch the transactions sent from `startBlock` to `endBlock` in `vida_id`
     let transactions = rpc.get_vida_data_transactions(start_block, end_block, vida_id).await.unwrap();
     // prints the trasnactions data
     for txs in transactions {
