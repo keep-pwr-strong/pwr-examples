@@ -4,13 +4,14 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-pwr-rs = "0.2.7"
+pwr-rs = "0.3.5"
 chrono = "0.4"
 hex = "0.4.3"
 serde_json = "1.0.128"
 serde = "1.0.210"
 warp = "0.3.7"
 dotenvy = "0.15.7"
+lazy_static = "1.5.0"
 
 [dev-dependencies]
 tokio = { version = "1.0", features = ["full"] }
