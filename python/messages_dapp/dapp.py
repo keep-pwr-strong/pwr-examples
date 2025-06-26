@@ -1,4 +1,4 @@
-from pwrpy.pwrwallet import PWRWallet
+from pwrpy.pwrwallet import Wallet
 from sync_messages import sync
 from dotenv import load_dotenv
 import json
@@ -7,9 +7,9 @@ import os
 load_dotenv()
 
 # Setting up your wallet in the SDK
-private_key = os.getenv("PRIVATE_KEY")
-wallet = PWRWallet(private_key)
-vm_id = 1234
+seed_phrase = os.getenv("SEED_PHRASE")
+wallet = Wallet.new(seed_phrase)
+vida_id = 1234
 
 def main():
     threading.Thread(target=sync, daemon=True).start()
@@ -19,7 +19,8 @@ def main():
         obj = {"message": message}
         data = json.dumps(obj).encode('utf-8')
         
-        response = wallet.send_vm_data_transaction(vm_id, data)
+        # Send the VIDA data
+        response = wallet.send_vida_data(vida_id, data)
         if response.success==False:
             print('FAILED!')
 main()
