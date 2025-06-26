@@ -1,28 +1,29 @@
 package conduits
 
 import (
-	"fmt"
-	"os"
-	"encoding/json"
-	"github.com/joho/godotenv"
-	"github.com/pwrlabs/pwrgo/wallet"
+    "fmt"
+    "os"
+    "encoding/json"
+    "github.com/joho/godotenv"
+    "github.com/pwrlabs/pwrgo/wallet"
 )
 
 func SendMessage() {
-	// Setting up your wallet in the SDK
+    // Setting up your wallet in the SDK
     godotenv.Load()
-    privateKey := os.Getenv("PRIVATE_KEY")
-    wallet := wallet.FromPrivateKey(privateKey)
+    seedPhrase := os.Getenv("SEED_PHRASE")
+    wallet, _ := wallet.New(seedPhrase)
 
-	vmId := 123
-	data, _ := json.Marshal(map[string]string{"message": "please send me pwr"})
+    vidaId := 123
+    data, _ := json.Marshal(map[string]string{"message": "please send me pwr"})
+    feePerByte := wallet.GetRpc().GetFeePerByte()
 
-	// Sending the VM data transaction
-	tx := wallet.SendVMData(vmId, data)
+    // Sending the VIDA data transaction
+    tx := wallet.SendVidaData(vidaId, data, feePerByte)
 
-	if tx.Success {
-		fmt.Printf("Transaction Hash: %s\n", tx.TxHash)
-	} else {
-		fmt.Printf("Failed to send transaction: %s\n", tx.Error)
-	}
+    if tx.Success {
+        fmt.Printf("Transaction Hash: %s\n", tx.Hash)
+    } else {
+        fmt.Printf("Failed to send transaction: %s\n", tx.Error)
+    }
 }
