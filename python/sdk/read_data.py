@@ -1,21 +1,21 @@
 from pwrpy.pwrsdk import PWRPY
 
 # Setting up the rpc api
-pwr = PWRPY()
+pwr = PWRPY("https://pwrrpc.pwrlabs.io/")
 
-def get_vm_data_active():
-    start_block = 843500
-    end_block = 843750
-    vm_id = 123
-    # fetch the transactions sent from `startBlock` to `endBlock` in `vmId`
-    transactions = pwr.get_vm_data_txns(start_block, end_block, vm_id)
+def get_vida_data_active():
+    start_block = 40635
+    end_block = 40726
+    vida_id = 123
+    # fetch the transactions sent from `start_block` to `end_block` in `vida_id`
+    transactions = pwr.get_vida_data_transactions(start_block, end_block, vida_id)
 
     for txs in transactions:
         sender = txs.sender
         data = txs.data
 
-        # Remove the '0x' prefix and decode the hexadecimal data to bytes data
-        decoded_data = bytes.fromhex(data[2:])
+        # Decode the hexadecimal data to bytes data
+        decoded_data = bytes.fromhex(data)
         # Convert the bytes data to a UTF-8 string
         string_data = decoded_data.decode('utf-8')
 
@@ -25,7 +25,7 @@ def get_vm_data_active():
         elif string_data.startswith("Hello"):
             word = string_data[6:]
             print(f'{sender}: {word}')
-get_vm_data_active()
+get_vida_data_active()
 
 def decoding():
     hex_data = "0x48656C6C6F20576F726C6421"
@@ -36,28 +36,29 @@ def decoding():
     string_data = decoded_data.decode('utf-8')
 
     print(f'Outputs: {string_data}') # Outputs: Hello World!
-# decoding()
+decoding()
 
-def get_vm_data():
-    start_block = 843500
-    end_block = 843750
-    vm_id = 123
+def get_vida_data():
+    start_block = 40635
+    end_block = 40726
+    vida_id = 123
 
-    transactions = pwr.get_vm_data_txns(start_block, end_block, vm_id)
+    transactions = pwr.get_vida_data_transactions(start_block, end_block, vida_id)
     for txs in transactions:
         print("Data:", txs.data)
-# get_vm_data()
+get_vida_data()
 
 def get_block():
     # the block number we want fetch
-    block_number = 20000
+    block_number = 100
     # get the block by number
     block = pwr.get_block_by_number(block_number)
     
     # prints the sender address from every transaction in the block
     for index, txs in enumerate(block.transactions):
-        print(f"Sender {index}: {txs.sender}")
-# get_block()
+        transaction = pwr.get_transaction_by_hash(txs.transaction_hash)
+        print(f"Sender {index}: {transaction.sender}")
+get_block()
 
 def account():
     address = "0x3b3b69093879e7b6f28366fa3c32762590ff547e"
@@ -68,4 +69,4 @@ def account():
     # get nonce of address
     nonce = pwr.get_nonce_of_address(address)
     print(f"Nonce: {nonce}")
-# account()
+account()

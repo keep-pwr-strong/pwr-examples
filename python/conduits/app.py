@@ -8,9 +8,9 @@ app = Flask(__name__)
 # Add sync to fetch messages and add it to the pending txs
 threading.Thread(target=sync, daemon=True).start()
 
-# Define an HTTP GET route at '/pendingVmTransactions'
+# Define an HTTP GET route at '/pending-vida-transactions'
 # When accessed, this route will return the list of pending transactions
-@app.route('/pendingVmTransactions/', methods=['GET'])
+@app.route('/pending-vida-transactions', methods=['GET'])
 def pending_vm_transactions():
     # Retrieve the list of pending transactions using the getPendingTransactions method
     pending_transactions = Transactions.get_pending_transactions()
